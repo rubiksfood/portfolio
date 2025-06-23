@@ -1,5 +1,5 @@
 Personal Project:
-Build a 'playback-speed/time converter' as a single page web app.
+Build a 'Playback Speed Calculator' as a single page web app.
 
 Technologies: HTML, CSS, Bootstrap & JavaScript.
 
