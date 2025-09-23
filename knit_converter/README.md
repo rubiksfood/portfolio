@@ -22,4 +22,4 @@ Python.
 
 # Notes:
 This project is an original idea, created for my mother. 
-She wanted to knit patterns from the US, but was confused by the terminology.
+She wanted to knit patterns from the US, but was confused by the different terminology.

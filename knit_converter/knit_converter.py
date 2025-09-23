@@ -33,8 +33,8 @@ us_gb_dict = {
     "knit 2 together": "k2tog",
     "laceweight": "1 ply",
     "fingering": "2 ply",
-    "sock": "3 ply",
-    "sport": "4 ply",
+    "sock": "3 ply", # This may cause issues with knitting a sock
+    "sport": "4 ply", # This may cause issues with certain descriptions
     "light worsted": "DK",
     "worsted": "aran",
     "bulky": "chunky",
