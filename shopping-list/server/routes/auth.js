@@ -1,9 +1,11 @@
-import express from "express";
-import db from "../db/connection.js";
 import bcrypt from "bcryptjs";
+import db from "../db/connection.js";
+import express from "express";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 const SALT_ROUNDS = 10;
+const JWT_SECRET = process.env.JWT_SECRET || "CHANGE-ME"; // REMEMBER TO CHANGE THIS IN PRODUCTION!
 
 // POST /auth/register
 router.post("/register", async (req, res) => {
@@ -34,6 +36,40 @@ router.post("/register", async (req, res) => {
     return res.status(201).json({ message: "User created" });
   } catch (err) {
     console.error("Register error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// POST /auth/login
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const usersCollection = await db.collection("users");
+    const user = await usersCollection.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const passwordMatches = await bcrypt.compare(
+      password,
+      user.passwordHash
+    );
+
+    if (!passwordMatches) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id.toString() },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    return res.json({ token });
+  } catch (err) {
+    console.error("Login error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 });
