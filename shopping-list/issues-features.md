@@ -1,4 +1,38 @@
-### Issues:
+## Features
+
+# Feature 4: 
+Create user profiles for the app.
+
+THINGS TO CONSIDER:
+- User authentication (npm install bcryptjs jsonwebtoken)
+- Create User registration route (in 'routes' directory, i.e. auth.js)
+- Add a log-in route to the same file.
+- Create a middleware to protect the routes.
+- Set up routes in app.js, 
+e.g.  <AuthProvider> 
+        <Switch>   
+          <Route path="/login" component={Login} />     
+          <Route path="/register" component={Register} />
+          <Route path="/shopping-list" component={ShoppingList} />
+
+- Create components for 'ProtectedRoute', 'Login' & 'Register'.
+- Register & log-in/out UI.
+- Update client to keep track of user related information re: shopping lists.
+
+# Feature 3: DONE
+When the item is toggled, it should appear underneath all the 'active' 
+items. (This may mean changing how the ShopList component renders the page). XXX
+
+# Feature 2: DONE
+Create a sublist (of crossed-off items). Perhaps add an attribute to each item, 
+that shows whether item is toggled or not? XXX
+
+# Feature 1: DONE
+A check box would allow the user to check off each item in the list.
+This item would then be crossed out. It would ALSO be put to the top of an 'inactive list' 
+i.e. items found below the 'active list'. XXX
+
+## Issues
 
 # PROBLEM 5: SOLVED
 When an item is edited using the edit button, its properties no longer change.
@@ -84,40 +118,6 @@ Then, ShopList() returns 2 tables, by calling newList() AND oldList().
 newList() returns only items where isChecked === false;
 oldList() returns only items where isChecked === true;
 
-
-### Future features:
-
-# Feature 4: 
-Create user profiles for the app.
-
-THINGS TO CONSIDER:
-- User authentication (npm install bcryptjs jsonwebtoken mongoose)?
-- Register & log-in/out UI
-- Create User registration route (in 'routes' directory, i.e. auth.js)
-- Add a log-in route to the same file.
-- Create a middleware to protect the routes.
-- Set up routes in app.js, 
-e.g.  <AuthProvider> 
-        <Switch>   
-          <Route path="/login" component={Login} />     
-          <Route path="/register" component={Register} />
-          <Route path="/shopping-list" component={ShoppingList} />
-
-- Create components for 'ProtectedRoute', 'Login' & 'Register'.
-- Update client to keep track of user related information re: shopping lists.
-
-# Feature 3: DONE
-When the item is toggled, it should appear underneath all the 'active' 
-items. (This may mean changing how the ShopList component renders the page). XXX
-
-# Feature 2: DONE
-Create a sublist (of crossed-off items). Perhaps add an attribute to each item, 
-that shows whether item is toggled or not? XXX
-
-# Feature 1: DONE
-A check box would allow the user to check off each item in the list.
-This item would then be crossed out. It would ALSO be put to the top of an 'inactive list' 
-i.e. items found below the 'active list'. XXX
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
