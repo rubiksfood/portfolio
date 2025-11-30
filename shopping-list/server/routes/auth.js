@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import db from "../db/connection.js";
 import express from "express";
 import jwt from "jsonwebtoken";
+import { ObjectId } from "mongodb";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 const SALT_ROUNDS = 10;
@@ -73,3 +75,23 @@ router.post("/login", async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
+
+// GET /auth/me  (not necessary... but useful for frontend)
+router.get("/me", auth, async (req, res) => {
+  try {
+    const usersCollection = await db.collection("users");
+    const user = await usersCollection.findOne(
+      { _id: new ObjectId(req.userId) },
+      { projection: { passwordHash: 0 } }
+    );
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    return res.json(user);
+  } catch (err) {
+    console.error("Me error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+export default router;
