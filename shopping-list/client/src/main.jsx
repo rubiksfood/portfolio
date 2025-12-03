@@ -1,40 +1,31 @@
-import App from "./App";
-import ShopItem from "./components/ShopItem";
-import ShopList from "./components/ShopList";
-import { AuthProvider } from "./context/AuthContext.jsx";
-import "./index.css";
-import * as React from "react";
-import * as ReactDOM from "react-dom/client";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import App from "./App.jsx";
+import "./index.css";
+
+import { AuthProvider } from "./context/AuthContext.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+
+import Login from "./pages/LoginPage.jsx";
+import Register from "./pages/RegisterPage.jsx";
+import ShoppingList from "./pages/ShoppingListPage.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
+      // Public routes
+      { path: "/login", element: <Login /> },
+      { path: "/register", element: <Register /> },
+      // Protected routes
       {
-        path: "/",
-        element: <ShopList />,
-      },
-    ],
-  },
-  {
-    path: "/edit/:id",
-    element: <App />,
-    children: [
-      {
-        path: "/edit/:id",
-        element: <ShopItem />,
-      },
-    ],
-  },
-  {
-    path: "/create",
-    element: <App />,
-    children: [
-      {
-        path: "/create",
-        element: <ShopItem />,
+        element: <ProtectedRoute />,
+        children: [
+          { path: "/", element: <ShoppingList /> },
+        ],
       },
     ],
   },
@@ -42,10 +33,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router}>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </RouterProvider>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </React.StrictMode>
 );
