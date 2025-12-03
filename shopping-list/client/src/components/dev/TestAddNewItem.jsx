@@ -18,7 +18,7 @@ export function AddNewItem({ onNewItem }) {
             headers: { 'Content-Type': 'application/json' },
         };
 
-        fetch('/http://localhost:5050/shopItem/', options)
+        fetch('http://localhost:5050/shopItem/', options)
             .then((r) => r.json())
             .then((item) => {
                 onNewItem(item);
