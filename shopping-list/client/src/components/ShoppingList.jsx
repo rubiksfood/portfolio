@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ToggleComponent from "./ToggleSwitch";
+import ToggleSwitch from "./ToggleSwitch";
 import ShopItemForm from "./ShopItemForm.jsx";
 
 const ShopItemRow = (props) => {
@@ -12,7 +12,7 @@ const ShopItemRow = (props) => {
   return (
     <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
       <td className="px-2 py-1 align-middle [&:has([role=checkbox])]:pr-0">
-        <ToggleComponent
+        <ToggleSwitch
           isToggled={shopItem.isChecked}
           onToggleChange={handleToggleChange}
         />
@@ -68,14 +68,18 @@ export default function ShoppingList() {
   const [editingItem, setEditingItem] = useState(null);
 
   async function fetchItems() {
-    const response = await fetch("http://localhost:5050/shopItem/");
-    if (!response.ok) {
-      const message = `An error occurred: ${response.statusText}`;
-      console.error(message);
-      return;
+    try {
+      const response = await fetch("http://localhost:5050/shopItem/");
+      if (!response.ok) {
+        const message = `An error occurred: ${response.statusText}`;
+        console.error(message);
+        return;
+      }
+      const items = await response.json();
+      setShopItems(items);
+    } catch (err) {
+      console.error("Error fetching items:", err);
     }
-    const items = await response.json();
-    setShopItems(items);
   }
 
   // Initial load
@@ -156,34 +160,8 @@ export default function ShoppingList() {
     }
   }
 
-  function newList() {
-    return shopItems
-      .filter((shopItem) => !shopItem.isChecked)
-      .map((shopItem) => (
-        <ShopItemRow
-          shopItem={shopItem}
-          toggleCheck={toggleCheck}
-          deleteShopItem={deleteShopItem}
-          onEdit={openEditModal}
-          key={shopItem._id}
-        />
-      ));
-  }
-
-  function oldList() {
-    return shopItems
-      .filter((shopItem) => shopItem.isChecked)
-      .map((shopItem) => (
-        <ShopItemRow
-          shopItem={shopItem}
-          toggleCheck={toggleCheck}
-          deleteShopItem={deleteShopItem}
-          onEdit={openEditModal}
-          key={shopItem._id}
-        />
-      ));
-
-  }
+  const uncheckedItems = shopItems.filter((item) => !item.isChecked);
+  const checkedItems = shopItems.filter((item) => item.isChecked);
 
   return (
     <>
@@ -225,13 +203,25 @@ export default function ShoppingList() {
               </tr>
             </thead>
             <tbody className="[&_tr:last-child]:border-0">
-              {newList()}
-              <tr className="border-b rounded">
-                <td colSpan="5" className="py-2 text-center text-xs text-slate-400">
-                  Checked items
-                </td>
-              </tr>
-              {oldList()}
+              {uncheckedItems.map((shopItem) => (
+                <ShopItemRow
+                  key={shopItem._id}
+                  shopItem={shopItem}
+                  toggleCheck={toggleCheck}
+                  deleteShopItem={deleteShopItem}
+                  onEdit={openEditModal}
+                />
+              ))}
+
+              {checkedItems.map((shopItem) => (
+                <ShopItemRow
+                  key={shopItem._id}
+                  shopItem={shopItem}
+                  toggleCheck={toggleCheck}
+                  deleteShopItem={deleteShopItem}
+                  onEdit={openEditModal}
+                />
+              ))}
             </tbody>
           </table>
         </div>
