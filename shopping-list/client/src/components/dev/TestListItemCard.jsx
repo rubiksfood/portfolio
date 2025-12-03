@@ -6,7 +6,7 @@ export function TodoListCard() {
     const [items, setItems] = useState(null);
 
     useEffect(() => {
-        fetch('/http://localhost:5050/shopItem/')
+        fetch('http://localhost:5050/shopItem/')
             .then((r) => r.json())
             .then(setItems);
     }, []);
