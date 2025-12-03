@@ -1,6 +1,4 @@
-import React from 'react';
-
-const ToggleComponent = ({ isToggled, onToggleChange }) => {
+const ToggleSwitch = ({ isToggled, onToggleChange }) => {
     const handleToggle = () => {
         onToggleChange(!isToggled);
     };
@@ -30,4 +28,4 @@ const ToggleComponent = ({ isToggled, onToggleChange }) => {
     );
 };
 
-export default ToggleComponent;
+export default ToggleSwitch;
