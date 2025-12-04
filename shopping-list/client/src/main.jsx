@@ -10,7 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 import Login from "./pages/LoginPage.jsx";
 import Register from "./pages/RegisterPage.jsx";
-import ShoppingList from "./pages/ShoppingListPage.jsx";
+import ShoppingListPage from "./pages/ShoppingListPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [
-          { path: "/", element: <ShoppingList /> },
+          { path: "/", element: <ShoppingListPage /> },
         ],
       },
     ],
