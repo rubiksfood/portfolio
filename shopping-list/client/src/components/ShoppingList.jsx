@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ToggleSwitch from "./ToggleSwitch";
 import ShopItemForm from "./ShopItemForm.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const ShopItemRow = (props) => {
   const { shopItem, toggleCheck, onEdit, deleteShopItem } = props;
@@ -67,9 +68,17 @@ export default function ShoppingList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
+  const { token, API_BASE_URL } = useAuth();
+
+  const authHeaders = {
+    Authorization: `Bearer ${token}`,
+  };
+
   async function fetchItems() {
     try {
-      const response = await fetch("http://localhost:5050/shopItem/");
+      const response = await fetch(`${API_BASE_URL}/shopItem/`, {
+        headers: authHeaders,
+      });
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         console.error(message);
@@ -84,13 +93,17 @@ export default function ShoppingList() {
 
   // Initial load
   useEffect(() => {
+    if (!token)  return;
     fetchItems();
-  }, []);
+  }, [token, API_BASE_URL]);
 
   const toggleCheck = async (id, isChecked) => {
-    await fetch(`http://localhost:5050/shopItem/${id}`, {
+    await fetch(`${API_BASE_URL}/shopItem/${id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json", 
+        ...authHeaders,
+      },
       body: JSON.stringify({ isChecked }),
     });
 
@@ -102,8 +115,9 @@ export default function ShoppingList() {
   };
 
   async function deleteShopItem(id) {
-    await fetch(`http://localhost:5050/shopItem/${id}`, {
+    await fetch(`${API_BASE_URL}/shopItem/${id}`, {
       method: "DELETE",
+      headers: authHeaders,
     });
     const newShopItems = shopItems.filter((el) => el._id !== id);
     setShopItems(newShopItems);
@@ -130,18 +144,25 @@ export default function ShoppingList() {
       let response;
       if (editingItem) {
         response = await fetch(
-          `http://localhost:5050/shopItem/${editingItem._id}`,
+          `${API_BASE_URL}/shopItem/${editingItem._id}`,
           {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+              "Content-Type": "application/json", 
+              ...authHeaders, 
+            },
             body: JSON.stringify(formData),
           }
         );
       } else {
         // Add new item
-        response = await fetch("http://localhost:5050/shopItem", {
+        response = await fetch(
+          `${API_BASE_URL}/shopItem`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            ...authHeaders,
+          },
           body: JSON.stringify({ ...formData, isChecked: false }),
         });
       }
