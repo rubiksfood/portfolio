@@ -1,40 +1,104 @@
-# Project title:
-Shopping List App
+# 🛒 Shopping List App
+A full-stack MERN application with user authentication, protected routes, and a responsive React interface. This project demonstrates my ability to design, build, and test a complete production-style system - from backend architecture to UI interaction design.
 
-# Description:
-This web app is designed to be used as a shopping list for grocery shopping.
+## 🚀 Overview
+This app allows users to create and manage personalised shopping lists. It includes full authentication, CRUD operations, stateful UI interactions, and persistent data storage in MongoDB. The UX is intentionally designed to be fast and intuitive, enabling users to add, edit and cross off items efficiently during real shopping use.
 
-# Technologies used:
-MERN stack, i.e. MongoDB, Express.js, React, and Node.js.
+## 🧰 Tech Stack
+- **Frontend**: React (Vite), TailwindCSS
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB Atlas
+- **Authentication**: JSON Web Tokens (JWT) + protected API routes
+- **Additional**: React Router, custom hook, modular components
 
-# Features:
-Full CRUD operations, i.e. the user can add items to the list, view them, edit them, and delete them.
+## ✨ Key Features
 
-In addition, the user can also cross items off, i.e. when adding them to their shopping trolley in a shop, to keep track of what they still want to buy.
-These items can then be 'uncrossed' at a later date, if the user buys that item regularly and wishes to store its details in the app for later use.
+### 🔐 Secure Authentication
+- Registration & login with hashed passwords
+- JWT-based sessions stored client-side
+- Protected API routes and protected frontend pages
+- Automatic redirect for unauthenticated users
 
-# Installation Instructions:
-1. Clone the repository.
-2. Ensure you have downloaded the dependencies, i.e. Node.js, TailwindCSS.
-3. Ensure you have a MongoDB account.
-4. Create a local version of a file named 'config.env' and add
+### 📝 Shopping List Management
+- Create, read, update, and delete items
+- “Cross off” items with a toggle switch
+- “Uncross” items to return them to the active list
+- Smart UI grouping: active items at the top, checked items grouped below
+- Modal-driven add/edit form for a clean and efficient workflow
+- Responsive layout optimised for desktop and mobile
+
+### 🧱 Architecture Highlights
+- Clean separation of concerns:
+  - **Pages** handle layout and high-level state
+  - **Components** handle UI and interactions
+  - **Context** centralises auth logic
+- **Custom hook** (useShopItems) helps to:
+  - Centralise business logic
+  - Improve testability
+  - Provide cleaner UI components
+- API-driven state updates with graceful fallback logic
+- Reusable modal form component (ShopItemForm)
+- React Router for structured navigation
+- Ready for frontend or end-to-end testing (Cypress / Playwright)
+
+## 🛠 Installation & Setup
+### 1. Clone the repository
+```
+git clone https://github.com/rubiksfood/portfolio.git
+```
+### 2. Install dependencies
+Frontend:
+```
+cd shopping-list
+cd client
+npm install
+```
+
+Backend:
+```
+cd shopping-list
+cd server
+npm install
+```
+### 3. Configure environment variables
+Create server/config.env with:
+```
 ATLAS_URI="YOUR_MONGODB_URI_HERE"
 PORT=5050
-5. Navigate to the 'server' folder, then run in a BASH terminal:
-> node --env-file=config.env server
-6. Navigate to the 'client' folder, then run in a BASH terminal:
-> npm run build
-> npm run dev
-7. Click on the link to your localhost in order to open the app.
+JWT_SECRET="your_secret_here"
+```
+### 4. Run the backend
+```
+cd server
+node --env-file=config.env server
+```
+### 5. Run the frontend
+```
+cd client
+npm run dev
+```
 
-# Usage:
-- Add items to the list using the 'Add New Item' button.
-- Add the details of an item using the input boxes: 'Name', 'Amount', & 'Notes'.
-- Click 'Save Item' and the item will be added to the main list.
-- Items can be edited by clicking the edit button.
-- Items can be deleted (permenantly removed) by clicking the delete button.
-- Items can also be visually crossed off the list (as well as removed from the 
-main list and added to a second sub list) by clicking the circle icon underneath 
-'Got it?' for that item.
-- Items can then be 'uncrossed' & re-added to the main list by clicking the circle 
-icon for that item (again).
+The app will start on ```http://localhost:5173```.
+
+## 💡 Usage Guide
+- Click **Add Item** to open the modal form and create a new entry.
+- Fill in the item name, amount, and optional notes.
+- Use the toggle switch to **cross off** items as you shop.
+- Click **Edit** on any item to modify it from within a modal.
+- Click **Delete** to permanently remove an item.
+- Crossed-off items automatically move to a separate list, beneath the active list.
+- Use **Login / Register / Logout** from the navbar to manage your session.
+
+## 🎯 Why This Project Matters
+This project demonstrates:
+- Full-stack development using modern tooling
+- State management, UI architecture, and component design
+- Secure authentication and protected API integration
+- Practical UX decisions for real-world workflows
+- Clean, maintainable, production-ready code
+- A system suitable for both backend testing and frontend automation (Playwright/Cypress)
+
+It forms part of my transition into software engineering and QA, showcasing not just functionality but also software design thinking.
+
+## 📄 License
+MIT License - open for learning, modification, and contribution.
