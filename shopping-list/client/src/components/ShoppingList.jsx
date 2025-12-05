@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ToggleSwitch from "./ToggleSwitch";
 import ShopItemForm from "./ShopItemForm.jsx";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useShopItems } from "../hooks/useShopItems.js";
 
-const ShopItemRow = (props) => {
-  const { shopItem, toggleCheck, onEdit, deleteShopItem } = props;
-
+const ShopItemRow = ({ shopItem, toggleCheck, onEdit, deleteShopItem }) => {
   const handleToggleChange = () => {
     toggleCheck(shopItem._id, !shopItem.isChecked);
   };
@@ -64,64 +62,17 @@ const ShopItemRow = (props) => {
 };
 
 export default function ShoppingList() {
-  const [shopItems, setShopItems] = useState([]);
+  const {
+    items,
+    loading, 
+    addItem,
+    updateItem,
+    deleteItem,
+    toggleCheck,
+  } = useShopItems();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-
-  const { token, API_BASE_URL } = useAuth();
-
-  const authHeaders = {
-    Authorization: `Bearer ${token}`,
-  };
-
-  async function fetchItems() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/shopItem/`, {
-        headers: authHeaders,
-      });
-      if (!response.ok) {
-        const message = `An error occurred: ${response.statusText}`;
-        console.error(message);
-        return;
-      }
-      const items = await response.json();
-      setShopItems(items);
-    } catch (err) {
-      console.error("Error fetching items:", err);
-    }
-  }
-
-  // Initial load
-  useEffect(() => {
-    if (!token)  return;
-    fetchItems();
-  }, [token, API_BASE_URL]);
-
-  const toggleCheck = async (id, isChecked) => {
-    await fetch(`${API_BASE_URL}/shopItem/${id}`, {
-      method: "PATCH",
-      headers: { 
-        "Content-Type": "application/json", 
-        ...authHeaders,
-      },
-      body: JSON.stringify({ isChecked }),
-    });
-
-    setShopItems((prevItems) =>
-      prevItems.map((item) =>
-        item._id === id ? { ...item, isChecked } : item
-      )
-    );
-  };
-
-  async function deleteShopItem(id) {
-    await fetch(`${API_BASE_URL}/shopItem/${id}`, {
-      method: "DELETE",
-      headers: authHeaders,
-    });
-    const newShopItems = shopItems.filter((el) => el._id !== id);
-    setShopItems(newShopItems);
-  }
 
   function openAddModal() {
     setEditingItem(null);
@@ -141,48 +92,19 @@ export default function ShoppingList() {
   // Handle saving an item (both add & edit)
   async function handleSaveItem(formData) {
     try {
-      let response;
       if (editingItem) {
-        response = await fetch(
-          `${API_BASE_URL}/shopItem/${editingItem._id}`,
-          {
-            method: "PATCH",
-            headers: { 
-              "Content-Type": "application/json", 
-              ...authHeaders, 
-            },
-            body: JSON.stringify(formData),
-          }
-        );
+        await updateItem(editingItem._id, formData);
       } else {
-        // Add new item
-        response = await fetch(
-          `${API_BASE_URL}/shopItem`, {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            ...authHeaders,
-          },
-          body: JSON.stringify({ ...formData, isChecked: false }),
-        });
+        await addItem({ ...formData, isChecked: false });
       }
-
-      if (!response.ok) {
-        const message = `An error occurred: ${response.statusText}`;
-        console.error(message);
-        return;
-      }
-
-      // Re-fetch the list after saving
-      await fetchItems();
       closeModal();
     } catch (err) {
       console.error("Error saving item:", err);
     }
   }
 
-  const uncheckedItems = shopItems.filter((item) => !item.isChecked);
-  const checkedItems = shopItems.filter((item) => item.isChecked);
+  const uncheckedItems = items.filter((item) => !item.isChecked);
+  const checkedItems = items.filter((item) => item.isChecked);
 
   return (
     <>
@@ -199,6 +121,11 @@ export default function ShoppingList() {
           + Add item
         </button>
       </div>
+
+      {/* Loading state */}
+      {loading && (
+        <p className="text-sm text-slate-500 mb-2">Loading your items…</p>
+      )}
 
       {/* Table */}
       <div className="border rounded-lg overflow-hidden pt-2 bg-white shadow-sm">
@@ -229,7 +156,7 @@ export default function ShoppingList() {
                   key={shopItem._id}
                   shopItem={shopItem}
                   toggleCheck={toggleCheck}
-                  deleteShopItem={deleteShopItem}
+                  deleteShopItem={deleteItem}
                   onEdit={openEditModal}
                 />
               ))}
@@ -239,7 +166,7 @@ export default function ShoppingList() {
                   key={shopItem._id}
                   shopItem={shopItem}
                   toggleCheck={toggleCheck}
-                  deleteShopItem={deleteShopItem}
+                  deleteShopItem={deleteItem}
                   onEdit={openEditModal}
                 />
               ))}
