@@ -109,14 +109,14 @@ export default function ShoppingList() {
   return (
     <>
       {/* Top bar with Add button */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 py-4.5">
         <h1 className="text-xl font-semibold text-slate-800">
           Your Shopping List
         </h1>
         <button
           type="button"
           onClick={openAddModal}
-          className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-md border border-input bg-white hover:bg-slate-100 px-3 py-1.5"
+          className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-md border border-input bg-white hover:bg-slate-100 px-2.5 py-1.5"
         >
           + Add item
         </button>
