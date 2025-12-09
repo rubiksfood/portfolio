@@ -1,6 +1,7 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 
 const uri = process.env.ATLAS_URI || "";
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -21,6 +22,9 @@ try {
   console.error(err);
 }
 
-let db = client.db("shopping_list");
+// Use a different DB for testing
+const dbName = process.env.NODE_ENV === "test" ? "shopping_list_test" : "shopping_list";
+
+let db = client.db(dbName);
 
 export default db;
