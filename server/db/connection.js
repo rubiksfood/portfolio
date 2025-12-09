@@ -27,4 +27,5 @@ const dbName = process.env.NODE_ENV === "test" ? "shopping_list_test" : "shoppin
 
 let db = client.db(dbName);
 
+export { client };
 export default db;
