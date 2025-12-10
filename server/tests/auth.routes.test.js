@@ -21,7 +21,7 @@ describe("Auth routes", () => {
     it("creates a user with a valid email and password", async () => {
       const res = await request(app)
         .post("/auth/register")
-        .send({ email: "test@example.com", password: "password123" });
+        .send({ email: "test@example.com", password: "pass123" });
 
       expect(res.statusCode).toBe(201);
       expect(res.body).toHaveProperty("message", "User created");
@@ -31,12 +31,12 @@ describe("Auth routes", () => {
       // First registration
       await request(app)
         .post("/auth/register")
-        .send({ email: "test@example.com", password: "password123" });
+        .send({ email: "test@example.com", password: "pass123" });
 
       // Second registration
       const res = await request(app)
         .post("/auth/register")
-        .send({ email: "test@example.com", password: "password123" });
+        .send({ email: "test@example.com", password: "pass123" });
 
       expect(res.statusCode).toBe(409);
     });
@@ -55,20 +55,28 @@ describe("Auth routes", () => {
       // Create user
       await request(app)
         .post("/auth/register")
-        .send({ email: "login@example.com", password: "secret123" });
+        .send({ email: "login@example.com", password: "Pass1234" });
 
       const res = await request(app)
         .post("/auth/login")
-        .send({ email: "login@example.com", password: "secret123" });
+        .send({ email: "login@example.com", password: "Pass1234" });
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty("token");
     });
 
-    it("rejects invalid credentials", async () => {
+    it("rejects invalid password", async () => {
       const res = await request(app)
         .post("/auth/login")
-        .send({ email: "reject@example.com", password: "wrong" });
+        .send({ email: "login@example.com", password: "wrong" });
+
+      expect(res.statusCode).toBe(401);
+    });
+
+    it("rejects unknown email", async () => {
+      const res = await request(app)
+        .post("/auth/login")
+        .send({ email: "unknown@example.com", password: "wrong" });
 
       expect(res.statusCode).toBe(401);
     });
