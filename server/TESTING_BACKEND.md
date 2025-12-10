@@ -175,3 +175,66 @@ TCON-AUTHZ-MW-04: Valid token populates req.userId
 | AUTHZ-MW-TC-03 | Invalid token is rejected                       | None         | Header: `Authorization: Bearer invalid.token`                         | `401 Unauthorized`, `{ "message": "Invalid or expired token" }`               | EG        |
 | AUTHZ-MW-TC-04 | Valid token allows access and sets `req.userId` | None         | Generate JWT with `{ userId: "12345" }`, send `Authorization: Bearer` | `200 OK` response from test route, response body includes `"userId": "12345"` | ST, EP    |
 
+## 5.3 CRUD Suite – `/shopItem`
+
+Covers:
+- GET /shopItem
+- GET /shopItem/:id
+- POST /shopItem
+- PATCH /shopItem/:id
+- DELETE /shopItem/:id
+
+### 5.3.1 Test Conditions
+
+- List:
+    - TCON-ITEM-LIST-01: Empty list when no items
+    - TCON-ITEM-LIST-02: List returns only the current user’s items
+- Create:
+    - TCON-ITEM-CREATE-01: Valid create item
+    - TCON-ITEM-CREATE-02: Invalid/missing fields
+- Get by ID:
+    - TCON-ITEM-GET-01: Get own item by valid ID
+    - TCON-ITEM-GET-02: Get non-existent item
+    - TCON-ITEM-GET-03: Get another user’s item
+- Update:
+    - TCON-ITEM-UPDATE-01: Update own item
+    - TCON-ITEM-UPDATE-02: Update non-existent item
+    - TCON-ITEM-UPDATE-03: Update another user’s item
+- Delete:
+    - TCON-ITEM-DELETE-01: Delete own item
+    - TCON-ITEM-DELETE-02: Delete non-existent item
+    - TCON-ITEM-DELETE-03: Delete another user’s item
+
+### 5.3.2 Test Cases – List & Create
+
+| TC ID           | Objective                                       | Precondition         | Input / Setup                                                   | Expected Result                                                   | Technique |
+| --------------- | ----------------------------------------------- | -------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------- | --------- |
+| ITEM-LIST-TC-01 | Empty list returned when user has no items      | Authenticated user   | `GET /shopItem`                                                 | `200 OK`, response body is `[]`                                   | EP        |
+| ITEM-LIST-TC-02 | Only current user’s items are returned          | Two users with items | Create items for User A & B; `GET /shopItem` as User A          | Only items belonging to User A are in response                    | DT        |
+| ITEM-CR-TC-01   | Item creation with valid data succeeds          | Authenticated user   | `POST /shopItem` with full body: name, amount, notes, isChecked | `201 Created`, body includes `{ acknowledged: true, insertedId }` | EP        |
+| ITEM-CR-TC-02*  | Item creation with missing required field fails | Authenticated user   | Missing `name` or other required field                          | `4xx` error once validation added                                 | EP, EG    |
+(* Planned once backend validation is implemented.)
+
+### 5.3.3 Test Cases – Get by ID
+
+| TC ID          | Objective                                     | Precondition                 | Input / Setup                                                          | Expected Result                  | Technique |
+| -------------- | --------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------- | -------------------------------- | --------- |
+| ITEM-GET-TC-01 | Get existing item owned by current user       | Item belongs to current user | Create item, then `GET /shopItem/:id` for its ID                       | `200 OK`, item object returned   | EP        |
+| ITEM-GET-TC-02 | Get non-existent item returns 404             | None                         | `GET /shopItem/<random valid ObjectId>`                                | `404 Not Found`                  | EG        |
+| ITEM-GET-TC-03 | Get other user’s item returns 404 (isolation) | Item owned by different user | Login as User A, request `GET /shopItem/:id_B` where item belongs to B | `404 Not Found`, no data leakage | EG, SEC   |
+
+### 5.3.4 Test Cases – Update
+
+| TC ID          | Objective                          | Precondition                   | Input / Setup                                                                       | Expected Result                               | Technique |
+| -------------- | ---------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------- | --------------------------------------------- | --------- |
+| ITEM-UPD-TC-01 | Update own item’s `isChecked` flag | Item belongs to current user   | Create item with `isChecked: false`, then `PATCH /shopItem/:id` `{isChecked: true}` | `200 OK`, returned item has `isChecked: true` | ST        |
+| ITEM-UPD-TC-02 | Update non-existent item           | None                           | `PATCH /shopItem/<random id>` with any body                                         | `404 Not Found`, no item updated              | EG        |
+| ITEM-UPD-TC-03 | Cannot update another user’s item  | Item belongs to different user | Login as User A, `PATCH /shopItem/:id_B` where item belongs to B                    | `404 Not Found`, unchanged item for User B    | SEC, EG   |
+
+### 5.3.5 Test Cases – Delete
+
+| TC ID          | Objective                         | Precondition                   | Input / Setup                                                     | Expected Result                                        | Technique |
+| -------------- | --------------------------------- | ------------------------------ | ----------------------------------------------------------------- | ------------------------------------------------------ | --------- |
+| ITEM-DEL-TC-01 | Delete own existing item          | Item belongs to current user   | Create item, then `DELETE /shopItem/:id`                          | `200 OK`, body `{ deletedCount: 1 }`                   | ST        |
+| ITEM-DEL-TC-02 | Delete non-existent item          | None                           | `DELETE /shopItem/<random id>`                                    | `404 Not Found`, `deletedCount` remains 0 (or similar) | EG        |
+| ITEM-DEL-TC-03 | Cannot delete another user’s item | Item belongs to different user | Login as User A, `DELETE /shopItem/:id_B` where item belongs to B | `404 Not Found`, item still present for User B         | SEC, EG   |
