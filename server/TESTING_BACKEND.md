@@ -154,3 +154,24 @@ Covers:
 | ------------- | -------------------------------------- | --------------- | --------------------------------------------------- | -------------------------------------- |---------- |
 | AUTH-ME-TC-01 | GET /auth/me succeeds with valid token | User registered | `{"email":"me@example.com","password":"secret123"}` | `200 OK`, body contains `token` string | EP, DT    |
 | AUTH-ME-TC-02 | GET /auth/me fails without valid token | None            | Same email, different password                      | `401 Unauthorized`                     | DT, EG    |
+
+## 5.2 Authorization Suite – JWT Middleware
+
+Covers the custom middleware that validates Authorization headers and tokens.
+
+### 5.2.1 Test Conditions
+
+TCON-AUTHZ-MW-01: No Authorization header
+TCON-AUTHZ-MW-02: Wrong header scheme (not “Bearer”)
+TCON-AUTHZ-MW-03: Invalid token
+TCON-AUTHZ-MW-04: Valid token populates req.userId
+
+### 5.2.2 Test Cases – Middleware
+
+| TC ID          | Objective                                       | Precondition | Input / Setup                                                         | Expected Result                                                               | Technique |
+| -------------- | ----------------------------------------------- | ------------ | --------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------- |
+| AUTHZ-MW-TC-01 | Missing `Authorization` header leads to 401     | None         | Call protected test route without header                              | `401 Unauthorized`, `{ "message": "Authorization header missing" }`           | EP, EG    |
+| AUTHZ-MW-TC-02 | Wrong scheme (“Token” instead of “Bearer”)      | None         | Header: `Authorization: Token abc`                                    | `401 Unauthorized`, `{ "message": "Invalid Authorization header" }`           | DT        |
+| AUTHZ-MW-TC-03 | Invalid token is rejected                       | None         | Header: `Authorization: Bearer invalid.token`                         | `401 Unauthorized`, `{ "message": "Invalid or expired token" }`               | EG        |
+| AUTHZ-MW-TC-04 | Valid token allows access and sets `req.userId` | None         | Generate JWT with `{ userId: "12345" }`, send `Authorization: Bearer` | `200 OK` response from test route, response body includes `"userId": "12345"` | ST, EP    |
+
