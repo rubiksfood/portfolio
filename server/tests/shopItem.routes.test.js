@@ -36,7 +36,7 @@ describe("ShopItem routes", () => {
 
   // LIST
 
-  // TCON-ITEM-LIST-01:
+  // TCON-ITEM-LIST-01: Empty list when no items
   it("returns empty list when there are no items", async () => {
     const res = await request(app)
       .get("/shopItem")
@@ -46,7 +46,7 @@ describe("ShopItem routes", () => {
     expect(res.body).toEqual([]);
   });
 
-  // TCON-ITEM-LIST-02:
+  // TCON-ITEM-LIST-02: List returns only the current user’s items
   it("returns only items for current user", async () => {
     // Create item for user A
     await request(app)
@@ -83,7 +83,7 @@ describe("ShopItem routes", () => {
 
   // CREATE
 
-  // TCON-ITEM-CREATE-01:
+  // TCON-ITEM-CREATE-01: Valid create item
   it("creates an item for the user", async () => {
     const res = await request(app)
       .post("/shopItem")
@@ -100,8 +100,8 @@ describe("ShopItem routes", () => {
     expect(res.body).toHaveProperty("acknowledged", true);
   });
 
-  // TCON-ITEM-CREATE-02:
-  it("should reject item creation with empty fields, but is currently accepted (known gap)", async () => {
+  // TCON-ITEM-CREATE-02: Invalid/missing fields
+  it("should reject item creation with empty \"name\" field, but is currently accepted (known gap)", async () => {
     // Backend does NOT enforce validation; this test documents current behaviour.
     const res = await request(app)
       .post("/shopItem")
@@ -115,7 +115,7 @@ describe("ShopItem routes", () => {
 
   // GET BY ID
 
-  // TCON-ITEM-GET-01:
+  // TCON-ITEM-GET-01: Get own item by valid ID
   it("returns an owned item by valid ID", async () => {
     const createRes = await request(app)
       .post("/shopItem")
@@ -139,7 +139,7 @@ describe("ShopItem routes", () => {
     expect(res.body).toHaveProperty("userId");
   });
 
-  // TCON-ITEM-GET-02:
+  // TCON-ITEM-GET-02: Get non-existent item
   it("returns 404 for non-existent item", async () => {
     const nonExistentId = new ObjectId().toHexString();
 
@@ -152,7 +152,7 @@ describe("ShopItem routes", () => {
     expect(res.text).toBe("Not found");
   });
 
-  // TCON-ITEM-GET-03:
+  // TCON-ITEM-GET-03: Get another user’s item
   it("returns 404 for another user's item", async () => {
     // Create item as other user (User B)
     const otherToken = await registerAndLogin("other@example.com");
@@ -179,7 +179,7 @@ describe("ShopItem routes", () => {
 
   // UPDATE
 
-  // TCON-ITEM-UPDATE-01:
+  // TCON-ITEM-UPDATE-01: Update own item
   it("updates item when owned by user", async () => {
     const createRes = await request(app)
       .post("/shopItem")
@@ -203,7 +203,7 @@ describe("ShopItem routes", () => {
     expect(res.body).toHaveProperty("isChecked", true);
   });
 
-  // TCON-ITEM-UPDATE-02:
+  // TCON-ITEM-UPDATE-02: Update non-existent item
   it("returns 404 when item does not exist", async () => {
     const nonExistentId = new ObjectId().toHexString();
 
@@ -216,7 +216,7 @@ describe("ShopItem routes", () => {
     expect(res.text).toBe("Item not found");
   });
 
-  // TCON-ITEM-UPDATE-03:
+  // TCON-ITEM-UPDATE-03: Update another user’s item
   it("returns 404 when updating another user's item", async () => {
     // Create item as other user (User B)
     const otherToken = await registerAndLogin("other@example.com");
@@ -244,7 +244,7 @@ describe("ShopItem routes", () => {
 
   // DELETE
 
-  // TCON-ITEM-DELETE-01:
+  // TCON-ITEM-DELETE-01: Delete own item
   it("deletes an owned item", async () => {
     const createRes = await request(app)
       .post("/shopItem")
@@ -266,7 +266,7 @@ describe("ShopItem routes", () => {
     expect(res.body).toHaveProperty("deletedCount", 1);
   });
 
-  // TCON-ITEM-DELETE-02:
+  // TCON-ITEM-DELETE-02: Delete non-existent item
   it("returns 404 for non-existent item", async () => {
     const nonExistentId = new ObjectId().toHexString();
 
@@ -278,7 +278,7 @@ describe("ShopItem routes", () => {
     expect(res.text).toBe("Item not found");
   });
 
-  // TCON-ITEM-DELETE-03:
+  // TCON-ITEM-DELETE-03: Delete another user’s item
   it("returns 404 when deleting another user's item", async () => {
     // Create item as other user (User B)
     const otherToken = await registerAndLogin("other@example.com");
