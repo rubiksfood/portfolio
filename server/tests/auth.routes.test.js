@@ -17,6 +17,7 @@ describe("Auth routes", () => {
     await client.close();
   });
 
+  // TCON-AUTH-REG-01: Valid registration
   describe("POST /auth/register", () => {
     it("creates a user with a valid email and password", async () => {
       const res = await request(app)
@@ -27,6 +28,16 @@ describe("Auth routes", () => {
       expect(res.body).toHaveProperty("message", "User created");
     });
 
+    // TCON-AUTH-REG-02: Missing fields in registration
+    it("rejects missing fields", async () => {
+      const res = await request(app)
+      .post("/auth/register")
+      .send({});
+
+      expect(res.statusCode).toBe(400);
+    });
+
+    // TCON-AUTH-REG-03: Duplicate registration
     it("rejects duplicate email", async () => {
       // First registration
       await request(app)
@@ -40,16 +51,9 @@ describe("Auth routes", () => {
 
       expect(res.statusCode).toBe(409);
     });
-
-    it("rejects missing fields", async () => {
-      const res = await request(app)
-      .post("/auth/register")
-      .send({});
-
-      expect(res.statusCode).toBe(400);
-    });
   });
 
+  // TCON-AUTH-LOG-01: Valid login
   describe("POST /auth/login", () => {
     it("returns token for valid credentials", async () => {
       // Create user
@@ -65,6 +69,7 @@ describe("Auth routes", () => {
       expect(res.body).toHaveProperty("token");
     });
 
+    // TCON-AUTH-LOG-02: Login with wrong password
     it("rejects invalid password", async () => {
       const res = await request(app)
         .post("/auth/login")
@@ -73,6 +78,7 @@ describe("Auth routes", () => {
       expect(res.statusCode).toBe(401);
     });
 
+    // TCON-AUTH-LOG-03: Login with unknown email
     it("rejects unknown email", async () => {
       const res = await request(app)
         .post("/auth/login")
@@ -82,6 +88,7 @@ describe("Auth routes", () => {
     });
   });
 
+  // TCON-AUTH-ME-01: /auth/me with valid token
   describe("GET /auth/me", () => {
     it("returns user info for a valid token", async () => {
       const registerRes = await request(app)
@@ -103,6 +110,7 @@ describe("Auth routes", () => {
       expect(res.body).not.toHaveProperty("passwordHash");
     });
 
+    // TCON-AUTH-ME-02: /auth/me without token
     it("rejects requests without a token", async () => {
       const res = await request(app).get("/auth/me");
       expect(res.statusCode).toBe(401);

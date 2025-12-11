@@ -16,12 +16,14 @@ function createTestApp() {
 describe("auth middleware", () => {
   const app = createTestApp();
 
+  // TCON-AUTHZ-MW-01: No Authorization header
   it("rejects when Authorization header is missing", async () => {
     const res = await request(app).get("/protected");
     expect(res.statusCode).toBe(401);
     expect(res.body).toHaveProperty("message", "Authorization header missing");
   });
 
+  // TCON-AUTHZ-MW-02: Wrong header scheme (not “Bearer”)
   it("rejects when header is not Bearer", async () => {
     const res = await request(app)
       .get("/protected")
@@ -30,6 +32,7 @@ describe("auth middleware", () => {
     expect(res.statusCode).toBe(401);
   });
 
+  // TCON-AUTHZ-MW-03: Invalid token
   it("rejects invalid token", async () => {
     const res = await request(app)
       .get("/protected")
@@ -38,6 +41,7 @@ describe("auth middleware", () => {
     expect(res.statusCode).toBe(401);
   });
 
+  // TCON-AUTHZ-MW-04: Valid token populates req.userId
   it("accepts valid token and sets req.userId", async () => {
     const token = jwt.sign({ userId: "12345" }, JWT_SECRET, {
       expiresIn: "1h",
