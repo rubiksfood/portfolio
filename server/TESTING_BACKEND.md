@@ -103,9 +103,11 @@ Automated tests are implemented with **Jest + Supertest** against a dedicated Mo
 **Test command (from `/server`):**
 
 ```bash
-NODE_ENV=test npm test
+npm test
 ```
 (Internally runs Jest with appropriate Node/Jest flags and loads `config.test.env`.)
+
+---
 
 # 5. Test Suites & Test Cases
 
@@ -128,8 +130,12 @@ Covers:
 - TCON-AUTH-LOG-01: Valid login
 - TCON-AUTH-LOG-02: Login with wrong password
 - TCON-AUTH-LOG-03: Login with unknown email
+- TCON-AUTH-LOG-04: Login fails with missing fields
 - TCON-AUTH-ME-01: /auth/me with valid token
-- TCON-AUTH-ME-02: /auth/me without valid token
+- TCON-AUTH-ME-02: /auth/me without token
+
+Todo (once implemented in backend):  
+- TCON-AUTH-REG-04: Register with invalid password length  
 
 ### 5.1.2 Test Cases – Registration
 
@@ -138,6 +144,8 @@ Covers:
 | AUTH-REG-TC-01  | Register with valid email & password   | Email not registered     | `{"email":"test@example.com","password":"pass123"}` | `201 Created`, body `{ "message": "User created" }`     | EP        |
 | AUTH-REG-TC-02  | Registration fails with missing fields | None                     | `{}`, or missing `email` or `password`               | `400 Bad Request`, validation error message             | EP, EG    |
 | AUTH-REG-TC-03  | Duplicate registration is rejected     | Email already registered | Register once, then repeat same email/password       | Second attempt: `409 Conflict`, `"User already exists"` | DT, EG    |
+| AUTH-REG-TC-04* | Password boundary validation (future)  | Password rules defined (e.g. min len)   | Min-length vs below-min-length passwords              | Min → success, below-min → `4xx`                        | BVA       |
+* Planned once backend enforces password length/format.
 
 ### 5.1.3 Test Cases – Login
 
@@ -146,7 +154,7 @@ Covers:
 | AUTH-LOG-TC-01 | Login succeeds with valid credentials | User registered      | `{"email":"login@example.com","password":"Pass1234"}` | `200 OK`, body contains `token` string      | EP, DT    |
 | AUTH-LOG-TC-02 | Login fails with wrong password       | User registered      | Same email, different password                        | `401 Unauthorized`, `"Invalid credentials"` | DT, EG    |
 | AUTH-LOG-TC-03 | Login fails for unknown email         | Email not registered | Email not in DB                                       | `401 Unauthorized`, `"Invalid credentials"` | EP, EG    |
-| AUTH-LOG-TC-04 | Login fails with missing fields       | None                 | Empty body or missing `password`                      | `4xx` error, appropriate message            | EP, EG    |
+| AUTH-LOG-TC-04 | Login fails with missing fields       | None                 | Empty body or missing password                        | `4xx` error, appropriate message            | EP, EG    |
 
 ### 5.1.4 Test Cases - Return user info via /auth/me
 
@@ -161,10 +169,10 @@ Covers the custom middleware that validates Authorization headers and tokens.
 
 ### 5.2.1 Test Conditions
 
-TCON-AUTHZ-MW-01: No Authorization header
-TCON-AUTHZ-MW-02: Wrong header scheme (not “Bearer”)
-TCON-AUTHZ-MW-03: Invalid token
-TCON-AUTHZ-MW-04: Valid token populates req.userId
+- TCON-AUTHZ-MW-01: No Authorization header
+- TCON-AUTHZ-MW-02: Wrong header scheme (not “Bearer”)
+- TCON-AUTHZ-MW-03: Invalid token
+- TCON-AUTHZ-MW-04: Valid token populates req.userId
 
 ### 5.2.2 Test Cases – Middleware
 
@@ -238,3 +246,61 @@ Covers:
 | ITEM-DEL-TC-01 | Delete own existing item          | Item belongs to current user   | Create item, then `DELETE /shopItem/:id`                          | `200 OK`, body `{ deletedCount: 1 }`                   | ST        |
 | ITEM-DEL-TC-02 | Delete non-existent item          | None                           | `DELETE /shopItem/<random id>`                                    | `404 Not Found`, `deletedCount` remains 0 (or similar) | EG        |
 | ITEM-DEL-TC-03 | Cannot delete another user’s item | Item belongs to different user | Login as User A, `DELETE /shopItem/:id_B` where item belongs to B | `404 Not Found`, item still present for User B         | SEC, EG   |
+
+---
+
+# 6. Traceability Matrix
+
+Mapping from test conditions → test cases → automated test files.
+
+| Test Condition          | Test Cases          | Automated File                  |
+| ----------------------- | ------------------- | ------------------------------- |
+| TCON-AUTH-REG-01..03    | AUTH-REG-TC-01..03  | `tests/auth.routes.test.js`     |
+| TCON-AUTH-LOG-01..03    | AUTH-LOG-TC-01..03  | `tests/auth.routes.test.js`     |
+| TCON-AUTH-ME-01..03     | AUTH-ME-TC-01..03   | `tests/auth.routes.test.js`     |
+| TCON-AUTHZ-MW-01..04    | AUTHZ-MW-TC-01..04  | `tests/auth.middleware.test.js` |
+| TCON-ITEM-LIST-01..02   | ITEM-LIST-TC-01..02 | `tests/shopItem.routes.test.js` |
+| TCON-ITEM-CREATE-01..02 | ITEM-CR-TC-01..02   | `tests/shopItem.routes.test.js` |
+| TCON-ITEM-GET-01..03    | ITEM-GET-TC-01..03  | `tests/shopItem.routes.test.js` |
+| TCON-ITEM-UPDATE-01..03 | ITEM-UPD-TC-01..03  | `tests/shopItem.routes.test.js` |
+| TCON-ITEM-DELETE-01..03 | ITEM-DEL-TC-01..03  | `tests/shopItem.routes.test.js` |
+
+---
+
+# 7. Test Execution
+
+## 7.1 How to Run Backend Tests
+
+From the server directory:
+```bash
+npm test
+```
+
+This command will:
+- Load environment variables (including ATLAS_URI, JWT_SECRET, NODE_ENV=test)
+- Connect to MongoDB test database
+- Run all *.test.js files beneath /tests/
+- Output a summary of passed/failed test cases
+
+## 7.2 Interpreting Results
+
+- Green (pass): All expectations met for the test case.
+- Red (fail): Investigate:
+    - Is the test written correctly?
+    - Does the actual behaviour differ from the expected behaviour?
+    - Is the environment misconfigured (e.g., DB, env vars)?
+
+---
+
+# 8. Maintenance & Future Improvements
+
+Planned enhancements:
+- Add full input validation for item creation and update (e.g., required fields, numeric limits).
+- Extend test cases using Boundary Value Analysis (BVA) for password in `register` and the "name" field in `ShopItem`, once validation exists.
+- Introduce additional security tests (e.g., rate limiting, brute-force login protection) in a later phase.
+- Expand tests to cover any new routes or features (e.g. shared lists, item categories, sorting, filtering).
+
+Test cases in this document should be updated whenever:
+- New backend features are added.
+- Existing routes are modified.
+- Requirements or assumptions change.
