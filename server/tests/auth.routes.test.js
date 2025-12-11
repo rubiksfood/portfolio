@@ -86,6 +86,21 @@ describe("Auth routes", () => {
 
       expect(res.statusCode).toBe(401);
     });
+
+    // TCON-AUTH-LOG-04: Login fails with missing fields
+    it("rejects missing fields", async () => {
+      const emailRes = await request(app)
+        .post("/auth/login")
+        .send({ email: "login@example.com" });
+
+      expect(emailRes.statusCode).toBe(401);
+
+      const emptyRes = await request(app)
+        .post("/auth/login")
+        .send({});
+
+      expect(emptyRes.statusCode).toBe(401);
+    });
   });
 
   // TCON-AUTH-ME-01: /auth/me with valid token
