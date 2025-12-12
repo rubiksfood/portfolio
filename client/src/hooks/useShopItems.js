@@ -12,7 +12,7 @@ export function useShopItems() {
 
   async function fetchItems() {
     try {
-      const res = await fetch(`${API_BASE_URL}/shopItem/`, {
+      const res = await fetch(`${API_BASE_URL}/shopItem`, {
         headers: authHeaders,
       });
       const data = await res.json();
