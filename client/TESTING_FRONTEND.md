@@ -170,9 +170,29 @@ The UI does not display custom validation messages; errors are shown only for se
 
 ### 5.3.1 Test Conditions
 
+- TCON-COMP-LIST-01: Item list renders from hook-provided `items`
+- TCON-COMP-LIST-02: Empty list is handled (no empty-state message is expected)
+- TCON-COMP-ITEM-01: Toggling an item calls the hook handler `toggleCheck` with correct arguments
+- TCON-COMP-ITEM-02: Deleting an item calls the hook handler `deleteItem` with correct ID
+- TCON-COMP-FORM-01: Form enforces required fields via HTML constraints validation (no custom error UI)
+- TCON-COMP-FORM-02: Valid form submission calls `onSubmit` with correct payload
+
 ### 5.3.2 Test Cases – ShoppingList
 
+| TC ID           | Objective                             | Setup                       | Expected Result                                | Technique |
+| --------------- | ------------------------------------- | --------------------------- | ---------------------------------------------- | --------- |
+| COMP-LIST-TC-01 | Renders list from hook-provided items | Hook returns items          | Item details are visible in the DOM            | EP        |
+| COMP-LIST-TC-02 | Handles empty list without error      | Hook returns empty array    | No item rows are rendered                      | EP, EG    |
+| COMP-LIST-TC-03 | Toggle item calls toggleCheck handler | Click toggle on item        | `toggleCheck` called with (itemId, !isChecked) | ST        |
+| COMP-LIST-TC-04 | Delete item calls delete handler      | Click delete on item        | `deleteItem` called with correct ID            | UC        |
+
+
 ### 5.3.3 Test Cases – ShopItemForm
+
+| TC ID           | Objective                                         | Setup                                 | Expected Result                                           | Technique |
+| --------------- | ------------------------------------------------- | ------------------------------------- | --------------------------------------------------------- | --------- |
+| COMP-FORM-TC-01 | Required name field enforced via HTML constraints | Render form; check required attribute | Name input has `required` attribute (no message expected) | EP, EG    |
+| COMP-FORM-TC-02 | Valid input triggers submit callback with payload | Enter valid name, submit              | `onSubmit` called with correct payload                    | EP, UC    |
 
 
 ## 5.4 Context & Hook Suite (AuthContext & useShopItems)
@@ -193,7 +213,7 @@ The UI does not display custom validation messages; errors are shown only for se
 | -------------- | ------------------------ | --------------- | --------------------- | --------- |
 | AUTHCTX-TC-01  | Login updates auth state | login() called  | user object populated | ST        |
 | AUTHCTX-TC-02  | Logout clears auth state | logout() called | user set to null      | ST        |
-| AUTHCTX-TC-03 | 401 resets auth state    | Mock 401        | AuthContext resets    | EG        |
+| AUTHCTX-TC-03  | 401 resets auth state    | Mock 401        | AuthContext resets    | EG        |
 
 ### 5.4.3 Test Cases – useShopItems
 
