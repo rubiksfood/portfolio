@@ -128,25 +128,27 @@ Below are the detailed frontend test suites.
 - TCON-AUTHUI-NAV-01: Successful login redirects user
 - TCON-AUTHUI-NAV-02: Successful registration redirects user
 
+**Note**: Client-side validation is implemented using HTML constraint validation (required, type="email").  
+The UI does not display custom validation messages; errors are shown only for server responses (e.g., invalid credentials).  
+
 ### 5.1.2 Test Cases – LoginPage
 
-| TC ID              | Objective                                        | Input / Setup                | Expected Result                                       | Technique |
-| ------------------ | ------------------------------------------------ | ---------------------------- | ----------------------------------------------------- | --------- |
-| AUTHUI-LOGIN-TC-01 | Show error when email/password fields empty      | Submit empty form            | Error message displayed; login not attempted          | EP, EG    |
-| AUTHUI-LOGIN-TC-02 | Invalid email format triggers validation         | Enter `abc` as email         | Validation message shown                              | EP        |
-| AUTHUI-LOGIN-TC-03 | Valid credentials trigger login request          | Enter valid email + password | `fetch` called with correct body                      | EP        |
-| AUTHUI-LOGIN-TC-04 | 401 returns error message to user                | MSW mock returns 401         | Error text rendered (“Invalid credentials”)           | EG        |
-| AUTHUI-LOGIN-TC-05 | Successful login redirects to Shopping List page | Mock API returns token       | `navigate('/shopping-list')` called / new UI rendered | ST, UC    |
+| TC ID              | Objective                                            | Input / Setup                        | Expected Result                                                | Technique|
+|--------------------|------------------------------------------------------|--------------------------------------|----------------------------------------------------------------|----------|
+| AUTHUI-LOGIN-TC-01 | Required fields are enforced via HTML constraints    | Render page                          | Email + Password inputs have `required` attribute              | EP, EG   |
+| AUTHUI-LOGIN-TC-02 | Invalid email formats are constrained at input level | Render page                          | Email input uses `type="email"` (HTML constraint validation)   | EP       |
+| AUTHUI-LOGIN-TC-03 | Valid credentials trigger login flow & persist token | Enter valid email + password, submit | Token stored in localStorage & authenticated state established | EP, UC   |
+| AUTHUI-LOGIN-TC-04 | Invalid credentials trigger UI error message         | Enter valid email + wrong password   | Error text rendered “Invalid credentials”, no token persisted  | EG       |
+| AUTHUI-LOGIN-TC-05 | Successful login redirects user to `/` route         | Valid login (MSW returns token)      | User is navigated to `/` route & next view is rendered         | ST, UC   |
 
 ### 5.1.3 Test Cases – RegisterPage
 
-| TC ID            | Objective                                          | Input / Setup     | Expected Result                   | Technique |
-| ---------------- | -------------------------------------------------- | ----------------- | --------------------------------- | --------- |
-| AUTHUI-REG-TC-01 | Required fields validated                          | Submit empty form | Error messages shown              | EP, EG    |
-| AUTHUI-REG-TC-02 | Valid registration triggers API                    | All fields valid  | Fetch called with correct payload | EP        |
-| AUTHUI-REG-TC-03 | Duplicate email error message shown                | Mock returns 409  | User sees “Email already exists”  | DT, EG    |
-| AUTHUI-REG-TC-04 | Successful registration redirects to login or list | Success response  | Navigation triggered to next page | ST, UC    |
-
+| TC ID            | Objective                                             | Input / Setup                        | Expected Result                                                 | Technique|
+|------------------|-------------------------------------------------------|--------------------------------------|-----------------------------------------------------------------|----------|
+| AUTHUI-REG-TC-01 | Required fields are enforced via HTML constraints     | Render page                          | Email + Password inputs have `required` attribute               | EP, EG   |
+| AUTHUI-REG-TC-02 | Valid registration triggers registration flow         | Enter valid email + password, submit | User is registered (MSW 201) & navigated to `/login`            | EP, UC   |
+| AUTHUI-REG-TC-03 | Duplicate email shows a user-visible error message    | Register existing email              | Error text rendered “User already exists”, no token persisted   | DT, EG   |
+| AUTHUI-REG-TC-04 | Successful registration redirects user to login route | Valid registration                   | User is navigated to the `/login` route & next view is rendered | ST, UC   |
 
 ## 5.2 Navigation & Routing Suite (ProtectedRoute / Navbar)
 
