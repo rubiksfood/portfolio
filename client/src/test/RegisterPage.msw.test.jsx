@@ -26,7 +26,7 @@ describe("RegisterPage (MSW)", () => {
     resetTestData?.();
   });
 
-  // AUTHUI-REG-TC-01 / TCON-AUTHUI-VAL-02:
+  // AUTHUI-REG-TC-01 / TCON-AUTHUI-INPUT-01
   // Validation exists for required fields (best-practice: assert required attributes)
   it("marks email & password as required inputs", () => {
     renderRegister();
@@ -35,7 +35,7 @@ describe("RegisterPage (MSW)", () => {
     expect(screen.getByLabelText(/password/i)).toBeRequired();
   });
 
-  // AUTHUI-REG-TC-02 + AUTHUI-REG-TC-04 / TCON-AUTHUI-SUB-02 + TCON-AUTHUI-NAV-02:
+  // AUTHUI-REG-TC-02 + AUTHUI-REG-TC-04 / TCON-AUTHUI-SUBMIT-02 + TCON-AUTHUI-NAV-02:
   // Valid registration triggers API call and redirects to /login
   it("registers successfully and redirects to /login", async () => {
     const user = userEvent.setup();
