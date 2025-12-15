@@ -1,7 +1,7 @@
 # TESTING_FRONTEND.md  
 ## Shopping List MERN – Frontend Test Specification  
 Author: **Joshua Pearson**  
-Last Updated: 2025-12-13  
+Last Updated: 2025-12-15  
 
 ---
 
@@ -119,17 +119,16 @@ Below are the detailed frontend test suites.
 
 ### 5.1.1 Test Conditions
 
-- TCON-AUTHUI-NEG-01: Login form validation (empty fields)
-- TCON-AUTHUI-NEG-02: Register form validation (empty/missing fields)
-- TCON-AUTHUI-NEG-03: Invalid email formats
-- TCON-AUTHUI-POS-01: Valid login triggers API call
-- TCON-AUTHUI-POS-02: Valid registration triggers API call
-- TCON-AUTHUI-ERR-01: 401 login error shows error message
-- TCON-AUTHUI-NAV-01: Successful login redirects user
-- TCON-AUTHUI-NAV-02: Successful registration redirects user
+- TCON-AUTHUI-INPUT-01:  Required input fields are enforced via HTML constraints  
+- TCON-AUTHUI-INPUT-02:  Email format is constrained at input level  
+- TCON-AUTHUI-SUBMIT-01: Valid login submission is processed correctly  
+- TCON-AUTHUI-SUBMIT-02: Valid registration submission is processed correctly  
+- TCON-AUTHUI-ERROR-01:  Authentication-related server errors are handled and shown to the user  
+- TCON-AUTHUI-NAV-01:    Successful login triggers correct post-login navigation  
+- TCON-AUTHUI-NAV-02:    Successful registration triggers navigation to the login page  
 
 **Note**: Client-side validation is implemented using HTML constraint validation (required, type="email").  
-The UI does not display custom validation messages; errors are shown only for server responses (e.g., invalid credentials).  
+The UI does not display custom validation messages; errors are shown only for server responses (e.g. invalid credentials).  
 
 ### 5.1.2 Test Cases – LoginPage
 
@@ -156,6 +155,9 @@ The UI does not display custom validation messages; errors are shown only for se
 
 - TCON-ROUTE-AUTH-01: Unauthenticated user redirected
 - TCON-ROUTE-AUTH-02: Authenticated user allowed access
+- TCON-NAV-UI-01: Navbar renders authentication-dependent links
+- TCON-NAV-ACT-01: Logout clears persisted authentication state
+- TCON-NAV-ACT-02: Logout triggers navigation to Login route
 
 ### 5.2.2 Test Cases – ProtectedRoute
 
@@ -165,6 +167,13 @@ The UI does not display custom validation messages; errors are shown only for se
 | ROUTE-PROT-TC-02 | Allow access when authenticated           | AuthContext: user present | Child component is rendered | EP, ST    |
 
 ### 5.2.3 Test Cases – Navbar
+
+| TC ID     | Objective                                             | Setup                            | Expected Result                                                   | Technique |
+| --------- | ----------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------- | --------- |
+| NAV-TC-01 | Navbar shows Login/Register when unauthenticated      | No token in storage              | Login and Register links visible; Logout not rendered             | ST        |
+| NAV-TC-02 | Navbar shows Logout and user email when authenticated | Valid token in storage           | Logout button visible; user email rendered; Login/Register hidden | ST        |
+| NAV-TC-03 | Clicking Logout clears authentication state           | Authenticated user               | Token removed from storage; Login/Register links rendered         | ST, EG    |
+| NAV-TC-04 | Logout navigates user to Login page                   | Authenticated user; click Logout | Login page rendered after action                                  | UC        |
 
 ## 5.3 Component Suite (ShoppingList, ToggleSwitch, ShopItemForm)
 
@@ -205,7 +214,10 @@ The UI does not display custom validation messages; errors are shown only for se
 - TCON-AUTHCTX-03: unauthorized API call resets state
 
 **useShopItems**
-- 
+- TCON-HOOK-ITEMS-01: fetch items on mount  
+- TCON-HOOK-ITEMS-02: handle loading state  
+- TCON-HOOK-ITEMS-03: handle API failures gracefully 
+- TCON-HOOK-ITEMS-04: update item list after create/update/delete  
 
 ### 5.4.2 Test Cases – AuthContext
 
@@ -216,5 +228,12 @@ The UI does not display custom validation messages; errors are shown only for se
 | AUTHCTX-TC-03  | 401 resets auth state    | Mock 401        | AuthContext resets    | EG        |
 
 ### 5.4.3 Test Cases – useShopItems
+
+| TC ID            | Objective                            | Mock Setup              | Expected Result                                         | Technique |
+| ---------------- | ------------------------------------ | ----------------------- | ------------------------------------------------------- | --------- |
+| HOOK-ITEMS-TC-01 | Fetch items on hook mount            | Items returned          | `items` state contains array                            | EP        |
+| HOOK-ITEMS-TC-02 | Handles loading state correctly      | Slow response simulated | `loading` === true, then `loading` === false            | ST        |
+| HOOK-ITEMS-TC-03 | Handles API failures gracefully      | 500 or network error    | `loading` === false, item unchanged, call console.error | EG        |
+| HOOK-ITEMS-TC-04 | Updates list on create/update/delete | Mocks for success       | `items` array updated accordingly                       | ST, UC    |
 
 ---
