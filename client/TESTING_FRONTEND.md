@@ -1,7 +1,7 @@
 # TESTING_FRONTEND.md  
 ## Shopping List MERN – Frontend Test Specification  
 Author: **Joshua Pearson**  
-Last Updated: 2025-12-15  
+Last Updated: 2025-12-16  
 
 ---
 
@@ -237,3 +237,97 @@ The UI does not display custom validation messages; errors are shown only for se
 | HOOK-ITEMS-TC-04 | Updates list on create/update/delete | Mocks for success       | `items` array updated accordingly                       | ST, UC    |
 
 ---
+
+# 6. Traceability Matrix
+
+## 6.1 Authentication UI (Login & Registration)
+
+| Test Condition ID     | Test Case ID(s)                      | Description                                       | Automated Test File                                                     |
+| --------------------- | ------------------------------------ | ------------------------------------------------- | ----------------------------------------------------------------------- |
+| TCON-AUTHUI-INPUT-01  | AUTHUI-LOGIN-TC-01, AUTHUI-REG-TC-01 | Required fields enforced via HTML constraints     | `src/test/LoginPage.msw.test.jsx`, `src/test/RegisterPage.msw.test.jsx` |
+| TCON-AUTHUI-INPUT-02  | AUTHUI-LOGIN-TC-02                   | Email format constrained at input level           | `src/test/LoginPage.msw.test.jsx`                                       |
+| TCON-AUTHUI-SUBMIT-01 | AUTHUI-LOGIN-TC-03                   | Valid login submission processed correctly        | `src/test/LoginPage.msw.test.jsx`                                       |
+| TCON-AUTHUI-SUBMIT-02 | AUTHUI-REG-TC-02                     | Valid registration submission processed correctly | `src/test/RegisterPage.msw.test.jsx`                                    |
+| TCON-AUTHUI-ERR-01    | AUTHUI-LOGIN-TC-04, AUTHUI-REG-TC-03 | Auth-related server errors handled and shown      | `src/test/LoginPage.msw.test.jsx`, `src/test/RegisterPage.msw.test.jsx` |
+| TCON-AUTHUI-NAV-01    | AUTHUI-LOGIN-TC-05                   | Successful login triggers post-login navigation   | `src/test/LoginPage.msw.test.jsx`                                       |
+| TCON-AUTHUI-NAV-02    | AUTHUI-REG-TC-04                     | Successful registration navigates to login page   | `src/test/RegisterPage.msw.test.jsx`                                    |
+
+
+## 6.2 Routing & Access Control
+
+| Test Condition ID  | Test Case ID(s)  | Description                              | Automated Test File                |
+| ------------------ | ---------------- | ---------------------------------------- | ---------------------------------- |
+| TCON-ROUTE-AUTH-01 | ROUTE-PROT-TC-01 | Unauthenticated user redirected to login | `src/test/ProtectedRoute.test.jsx` |
+| TCON-ROUTE-AUTH-02 | ROUTE-PROT-TC-02 | Authenticated user allowed access        | `src/test/ProtectedRoute.test.jsx` |
+
+## 6.3 Authentication State Management (AuthContext)
+
+| Test Condition ID | Test Case ID(s) | Description                        | Automated Test File             |
+| ----------------- | --------------- | ---------------------------------- | ------------------------------- |
+| TCON-AUTHCTX-01   | AUTHCTX-TC-01   | Login updates authentication state | `src/test/AuthContext.test.jsx` |
+| TCON-AUTHCTX-02   | AUTHCTX-TC-02   | Logout clears authentication state | `src/test/AuthContext.test.jsx` |
+| TCON-AUTHCTX-03   | AUTHCTX-TC-03   | Invalid token resets auth state    | `src/test/AuthContext.test.jsx` |
+
+## 6.4 Navigation UI (Navbar)
+
+| Test Condition ID | Test Case ID(s) | Description                                   | Automated Test File        |
+| ----------------- | --------------- | --------------------------------------------- | -------------------------- |
+| TCON-NAV-UI-01    | NAV-TC-01       | Navbar renders authentication-dependent links | `src/test/Navbar.test.jsx` |
+| TCON-NAV-ACT-01   | NAV-TC-03       | Logout clears persisted authentication state  | `src/test/Navbar.test.jsx` |
+| TCON-NAV-ACT-02   | NAV-TC-04       | Logout triggers navigation to Login route     | `src/test/Navbar.test.jsx` |
+
+## 6.5 Component Suite (Shopping List & Form)
+
+| Test Condition ID | Test Case ID(s) | Description                                | Automated Test File                  |
+| ----------------- | --------------- | ------------------------------------------ | ------------------------------------ |
+| TCON-COMP-LIST-01 | COMP-LIST-TC-01 | Item list renders from hook-provided items | `src/test/ShoppingListPage.test.jsx` |
+| TCON-COMP-LIST-02 | COMP-LIST-TC-02 | Empty list handled without errors          | `src/test/ShoppingListPage.test.jsx` |
+| TCON-COMP-ITEM-01 | COMP-LIST-TC-03 | Toggle item calls correct handler          | `src/test/ShoppingListPage.test.jsx` |
+| TCON-COMP-ITEM-02 | COMP-LIST-TC-04 | Delete item calls delete handler           | `src/test/ShoppingListPage.test.jsx` |
+| TCON-COMP-FORM-01 | COMP-FORM-TC-01 | Required form fields enforced via HTML     | `src/test/ShopItemForm.test.jsx`     |
+| TCON-COMP-FORM-02 | COMP-FORM-TC-02 | Valid submission calls submit callback     | `src/test/ShopItemForm.test.jsx`     |
+
+## 6.6 Custom Hook (useShopItems)
+
+| Test Condition ID  | Test Case ID(s)  | Description                      | Automated Test File             |
+| ------------------ | ---------------- | -------------------------------- | ------------------------------- |
+| TCON-HOOK-ITEMS-01 | HOOK-ITEMS-TC-01 | Fetch items on hook mount        | `src/test/useShopItems.test.jsx` |
+| TCON-HOOK-ITEMS-02 | HOOK-ITEMS-TC-02 | Handles loading state            | `src/test/useShopItems.test.jsx` |
+| TCON-HOOK-ITEMS-03 | HOOK-ITEMS-TC-03 | API failures handled gracefully  | `src/test/useShopItems.test.jsx` |
+| TCON-HOOK-ITEMS-04 | HOOK-ITEMS-TC-04 | Item list updates after CRUD ops | `src/test/useShopItems.test.jsx` |
+
+
+- TCON-HOOK-ITEMS-01: fetch items on mount  
+- TCON-HOOK-ITEMS-02: handle loading state  
+- TCON-HOOK-ITEMS-03: handle API failures gracefully 
+- TCON-HOOK-ITEMS-04: update item list after create/update/delete  
+
+---
+
+# 7. Test Execution
+
+Run all tests using:
+```
+npm test
+```
+
+To generate coverage:
+```
+npm test -- --coverage
+```
+
+---
+
+# 8. Maintenance & Future Enhancements
+
+Areas planned for future extension:
+- Stricter client-side validation (BVA test cases)
+- More robust error boundary tests
+- UI accessibility tests (ARIA roles, tab order)
+- Snapshot tests for visual regression (optional)
+- Tests for future planned features (shared lists, categories, filters, sorting)
+
+All new UI features must include:
+- Updated test conditions
+- Added/updated test cases
+- Proper mocking of new API calls
