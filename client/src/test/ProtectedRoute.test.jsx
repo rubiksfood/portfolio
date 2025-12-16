@@ -1,10 +1,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
+import { http, HttpResponse } from "msw";
 
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import { renderWithProviders } from "./testUtilities.jsx";
 import { resetTestData } from "./msw/handlers.js";
 import { RoutesHarness } from "./RoutesHarness.jsx";
+import { server } from "./msw/server.js";
 
 function LoginPage() {
   return <h1>Login Page</h1>;
@@ -43,6 +45,13 @@ describe("ProtectedRoute (MSW)", () => {
 
   // ROUTE-PROT-TC-02
   it("shows loading state while validating token, then renders protected content", async () => {
+    // Force /auth/me to be slow so Loading is observable and stable
+  server.use(
+    http.get("http://localhost:5050/auth/me", async () => {
+      await new Promise((r) => setTimeout(r, 50));
+      return HttpResponse.json({ _id: "user-1", email: "test@example.com" }, { status: 200 });
+    })
+  );
     renderWithProviders(
       <RoutesHarness
         routes={[
