@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Outlet } from "react-router-dom";
 
 import Navbar from "../components/Navbar.jsx";
 import { renderWithProviders } from "./testUtilities.jsx";
@@ -17,6 +18,15 @@ function LoginStub() {
 
 function RegisterStub() {
   return <h1>Register Page</h1>;
+}
+
+function Layout() {
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
 }
 
 function renderNavbar({ route = "/", token = null } = {}) {
@@ -73,7 +83,23 @@ describe("Navbar (MSW)", () => {
   // NAV-TC-03 + NAV-TC-04 / TCON-NAV-ACT-01 + TCON-NAV-ACT-02
   it("clicking Logout clears auth state and navigates to /login", async () => {
     const user = userEvent.setup();
-    renderNavbar({ token: "token-user-1" });
+  
+    renderWithProviders(
+    <RoutesHarness
+      routes={[
+        {
+          path: "/",
+          element: <Layout />,
+          children: [
+            { path: "/", element: <HomeStub /> },
+            { path: "/login", element: <LoginStub /> },
+            { path: "/register", element: <RegisterStub /> },
+          ],
+        },
+      ]}
+    />,
+    { route: "/", token: "token-user-1" }
+  );
 
     // wait until user hydrated to check AuthProvider is fully running
     expect(await screen.findByText("test@example.com")).toBeInTheDocument();
