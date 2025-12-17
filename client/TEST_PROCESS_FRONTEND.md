@@ -1,7 +1,7 @@
 # TEST_PROCESS_FRONTEND.md  
 ## Shopping List MERN – Frontend Test Process  
 Author: **Joshua Pearson**  
-Last Updated: 2025-12-13  
+Last Updated: 2025-12-16  
 
 ---
 
@@ -47,10 +47,10 @@ This document focuses exclusively on **frontend testing**. Backend and E2E proce
 
 - Component-level testing of:
   - Navbar  
-  - ToggleSwitch  
   - ShoppingList  
   - ShoppingListForm  
-  - ProtectedRoute  
+  - ProtectedRoute
+  - Item toggling behaviour (ToggleSwitch verified via ShoppingList integration)  
 - Page-level testing of:
   - LoginPage  
   - RegisterPage  
@@ -216,7 +216,8 @@ Test Analysis identifies **test conditions** derived from UI behaviour and funct
 ### **Custom Hook (`useShopItems`)**
 
 - Fetches items on mount
-- Handles loading and error states
+- Handles loading state
+- API errors are handled gracefully (logging & UI stabilisation)
 - Updates item list after create/update/delete
 
 ---
@@ -263,3 +264,150 @@ Frontend test design uses ISTQB techniques to derive meaningful test coverage.
 - When not authed: show "Login/Register"  
 
 ---
+
+# 4. Test Implementation (Frontend)
+
+Here the testware is created: configurations, mocks, utilities, and test files.
+
+---
+
+## 4.1 Frontend Testware Produced
+
+### **Test Directory Structure**
+
+```
+client/
+  src/
+    test/
+      AuthContext.test.jsx
+      LoginPage.msw.test.jsx
+      Navbar.test.jsx
+      ProtectedRoute.test.jsx
+      RegisterPage.msw.test.jsx
+      RoutesHarness.jsx
+      setupTests.js
+      ShopItemForm.test.jsx
+      ShoppingListPage.test.jsx
+      TestUtilities.jsx
+      useShopItems.test.jsx
+    test/msw/
+        handlers.js
+        server.js (msw)
+```
+
+### **Key Implementation Elements**
+
+- `setupTests.js` configures:
+  - React Testing Library defaults  
+  - MSW server setup/teardown  
+- API calls are intercepted and mocked  
+- Components wrapped in:
+  - `AuthProvider`  
+  - `MemoryRouter`
+
+---
+
+## 4.2 Test Data Strategy
+
+- Mocked API responses emulate real backend behaviour  
+- Different handlers used for:
+  - success responses  
+  - validation errors  
+  - 401 unauthorized  
+  - empty lists  
+- No persistent test data  
+- Each test resets handlers  
+
+---
+
+# 5. Test Execution (Frontend)
+
+---
+
+## 5.1 Running Tests
+
+From the `client` directory:
+
+```bash
+npm test
+```
+
+What happens:
+- JSDOM environment loads
+- MSW mock server starts
+- Component and page tests run
+- Coverage (optional) generated via:
+```
+npm test -- --coverage
+```
+
+---
+
+## 5.2 Test Result Interpretation
+
+- Green → expected UI behaviour confirmed
+- Red → investigate:
+    - Incorrect test expectation
+    - Regression in UI logic
+    - Mock API mismatch
+    - Context or routing issue
+
+## 5.3 Defect Handling
+
+Defects discovered during automated or manual testing are:
+1. Documented in GitHub Issues
+2. Linked to:
+    - Test case
+    - Component or route
+3. Fixed in code
+4. Regression test added if necessary
+5. Tests re-run in CI
+
+---
+
+# 6. Test Completion (Frontend)
+
+---
+
+## 6.1 Exit Criteria Validation
+
+- All planned frontend tests implemented + passing
+- Authentication, routing, forms, and state logic covered
+- UI regression suite stable
+- No unaddressed high-severity UI bugs
+- Documentation updated
+
+## 6.2 Coverage Assessment
+
+**Functional Coverage**
+- Authentication UI
+- Form validation
+- Protected routes
+- List rendering
+- CRUD operations via mocked API
+
+**State Coverage**
+- Logged-in vs logged-out
+- Item toggled vs untoggled
+- Loading, success, and error states
+
+**Risk Coverage**
+- Unauthorized access
+- Data isolation (frontend-side)
+- Network error handling
+
+## 6.3 Testware Maintenance
+
+Future changes require:
+- Updating test cases
+- Extending MSW handlers
+- Maintaining routing and context tests
+- Adding coverage for new features (shared lists, sorting, categories, etc.)
+
+## 6.4 Lessons Learned
+
+- React Testing Library encourages correct behaviour-based testing.
+- MSW provides reliable, realistic mock API behaviour.
+- Testing Context & Hooks early makes UI issues easier to track.
+- Separating unit, integration, and pseudo-system tests improves clarity.
+- Documenting ISTQB-aligned process helps to internalise testing procedures and practices.
