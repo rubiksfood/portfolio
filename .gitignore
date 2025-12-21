@@ -1,0 +1,9 @@
+# Node modules
+server/node_modules
+server/*.local
+
+# API key
+server/config.env
+
+# E2E test environment variables
+e2e/config.e2e.env
