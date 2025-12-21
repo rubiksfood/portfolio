@@ -23,7 +23,16 @@ try {
 }
 
 // Use a different DB for testing
-const dbName = process.env.NODE_ENV === "test" ? "shopping_list_test" : "shopping_list";
+const env = process.env.NODE_ENV;
+
+// Prefer an explicit DB name if provided (useful for CI/E2E)
+const dbName =
+  process.env.DB_NAME || 
+  (env === "test" 
+    ? "shopping_list_test" 
+    : env === "e2e"
+      ? "shopping_list_test_e2e"
+      : "shopping_list");
 
 let db = client.db(dbName);
 
