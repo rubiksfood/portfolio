@@ -1,7 +1,0 @@
-# Node modules
-node_modules
-*.local
-
-# APi key
-config.env
-
