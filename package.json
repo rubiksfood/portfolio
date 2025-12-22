@@ -10,5 +10,12 @@
     "dotenv": "^17.2.3",
     "mongodb": "^7.0.0",
     "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "e2e:reset-db": "node e2e/utils/reset-db.mjs",
+    "e2e:test": "playwright test",
+    "e2e:test:ui": "playwright test --ui",
+    "e2e:test:headed": "playwright test --headed",
+    "e2e:test:list": "playwright test --list"
   }
 }
