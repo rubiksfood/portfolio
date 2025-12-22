@@ -112,3 +112,21 @@ E2E testing aims to:
 This section defines E2E test conditions (TCON) and test cases (TC).
 
 ---
+
+# 5.1 Routing & Authentication Suite (E2E)
+
+## 5.1.1 Test Conditions
+
+- **TCON-E2E-ROUTE-01:** Unauthenticated access to a protected route redirects to `/login`
+- **TCON-E2E-AUTH-01:** Login persists authentication and grants access to protected home route
+- **TCON-E2E-AUTH-02:** Logout clears authentication state and redirects to `/login`
+
+## 5.1.2 Test Cases
+
+| TC ID           | Objective                       | Preconditions       | Steps                                            | Expected Result                               | Technique   |
+|-----------------|---------------------------------|---------------------|--------------------------------------------------|-----------------------------------------------|-------------|
+| E2E-ROUTE-TC-01 | Verify protected route redirect | No token in browser | 1) Navigate to `/`                               | Redirected to `/login`; login form visible    | ST, SEC, EG |
+| E2E-AUTH-TC-01  | Verify login grants access      | User exists         | 1) Go to `/login` 2) Enter valid creds 3) Submit | Navigates to `/`; token stored; list rendered | UC, ST      |
+| E2E-AUTH-TC-02  | Verify logout clears session    | Logged-in user      | 1) Click Logout                                  | Redirected to `/login`; token removed         | ST, EG      |
+
+---
