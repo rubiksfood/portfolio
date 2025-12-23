@@ -130,3 +130,19 @@ This section defines E2E test conditions (TCON) and test cases (TC).
 | E2E-AUTH-TC-02  | Verify logout clears session    | Logged-in user      | 1) Click Logout                                  | Redirected to `/login`; token removed         | ST, EG      |
 
 ---
+
+# 5.2 Shopping List Core Functionality Suite (E2E)
+
+## 5.2.1 Test Conditions
+
+- **TCON-E2E-ITEM-01:** User can create a shopping list item
+- **TCON-E2E-ITEM-02:** User can delete a shopping list item
+
+## 5.2.2 Test Cases
+
+| TC ID          | Objective                | Preconditions               | Steps                                         | Expected Result          | Technique |
+|----------------|--------------------------|-----------------------------|-----------------------------------------------|--------------------------|-----------|
+| E2E-ITEM-TC-01 | Add item appears in list | Logged-in user              | 1) Click “+ Add item” 2) Enter name 3) Submit | Item row visible in list | UC, EP    |
+| E2E-ITEM-TC-02 | Delete item removes it   | Logged-in user; item exists | 1) Click Delete                               | Item removed from list   | UC, EG    |
+
+---
