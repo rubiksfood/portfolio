@@ -14,10 +14,17 @@
     "wait-on": "^8.0.0"
   },
   "scripts": {
+    "dev:server": "cd server && node --env-file=../e2e/config.e2e.env server.js",
+    "dev:client": "cd client && npm run dev",
+    "dev": "concurrently -k -n server,client -c auto \"npm run dev:server\" \"npm run dev:client\"",
+    "e2e:docker:up": "docker compose -f docker-compose.e2e.yml up -d",
+    "e2e:docker:down": "docker compose -f docker-compose.e2e.yml down",
     "e2e:reset-db": "node e2e/utils/reset-db.mjs",
-    "e2e:test": "playwright test",
+    "e2e:test": "npm run e2e:docker:up && playwright test",
     "e2e:test:ui": "playwright test --ui",
-    "e2e:test:headed": "playwright test --headed",
-    "e2e:test:list": "playwright test --list"
+    "e2e:test:headed": "npm run e2e:docker:up && playwright test --headed",
+    "e2e:test:list": "playwright test --list",
+    "test:e2e": "npm run e2e:docker:up && playwright test",
+    "test:e2e:headed": "npm run e2e:docker:up && playwright test --headed"
   }
 }
