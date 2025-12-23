@@ -15,6 +15,9 @@ async function globalSetup() {
     throw new Error("ATLAS_URI is not set for E2E tests");
   }
 
+  // Ensure MongoDB Docker container is running and healthy
+  execSync("docker inspect --format='{{.State.Health.Status}}' shopping-list-mongo-e2e",  { stdio: "inherit" }
+);
   // Run reset script
   execSync("node e2e/utils/reset-db.mjs", { stdio: "inherit" });
 }
