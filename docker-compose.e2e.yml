@@ -1,0 +1,11 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: shopping-list-mongo-e2e
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
