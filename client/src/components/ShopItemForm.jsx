@@ -36,7 +36,7 @@ export default function ShopItemForm({ initialItem, onSubmit, onCancel }) {
   }
 
   return (
-    <div>
+    <div role="dialog" aria-modal="true" aria-label="Add Item">
       <h3 className="text-lg font-semibold mb-4">
         {initialItem ? "Edit Item" : "Add Item"}
       </h3>
@@ -56,10 +56,11 @@ export default function ShopItemForm({ initialItem, onSubmit, onCancel }) {
 
           <div className="space-y-2">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="item-name" className="block text-sm font-medium text-slate-700 mb-1">
                 Name
               </label>
               <input
+                id="item-name"
                 type="text"
                 name="name"
                 value={shopItem.name}
@@ -70,10 +71,11 @@ export default function ShopItemForm({ initialItem, onSubmit, onCancel }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="item-amount" className="block text-sm font-medium text-slate-700 mb-1">
                 Amount
               </label>
               <input
+                id="item-amount"
                 type="text"
                 name="amount"
                 value={shopItem.amount}
@@ -83,10 +85,11 @@ export default function ShopItemForm({ initialItem, onSubmit, onCancel }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="item-notes" className="block text-sm font-medium text-slate-700 mb-1">
                 Notes
               </label>
               <textarea
+                id="item-notes"
                 name="notes"
                 value={shopItem.notes}
                 onChange={handleUpdate}
