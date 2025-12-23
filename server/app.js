@@ -5,6 +5,11 @@ import shopItems from "./routes/shopItem.js";
 
 const app = express();
 
+// Health check for Playwright e2e / CI
+app.get("/health", (req, res) => {
+  res.status(200).send("ok");
+});
+
 app.use(cors());
 app.use(express.json());
 app.use("/auth", authRoutes);
