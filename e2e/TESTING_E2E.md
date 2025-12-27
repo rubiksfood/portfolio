@@ -146,3 +146,17 @@ This section defines E2E test conditions (TCON) and test cases (TC).
 | E2E-ITEM-TC-02 | Delete item removes it   | Logged-in user; item exists | 1) Click Delete                               | Item removed from list   | UC, EG    |
 
 ---
+
+# 5.3 Security / Data Isolation Suite (E2E)
+
+## 5.3.1 Test Conditions
+
+- **TCON-E2E-SEC-01:** User cannot see another user’s shopping items
+
+## 5.3.2 Test Cases
+
+| TC ID         | Objective                        | Preconditions                      | Steps                                 | Expected Result                           | Technique   |
+|---------------|----------------------------------|------------------------------------|---------------------------------------|-------------------------------------------|-------------|
+| E2E-SEC-TC-01 | Verify cross-user data isolation | User A and User B exist with items | 1) Login as User A 2) Navigate to `/` | Only User A’s items visible; not User B’s | SEC, DT, EG |
+
+---
