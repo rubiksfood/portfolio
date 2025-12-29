@@ -12,7 +12,7 @@ function requireEnv(name) {
 const ATLAS_URI = requireEnv("ATLAS_URI");
 
 // Set this to a dedicated E2E DB name (NEVER prod!)
-const E2E_DB_NAME = process.env.E2E_DB_NAME || "shopping_list_test_e2e";
+const E2E_DB_NAME = process.env.E2E_DB_NAME || "shopping-list-test-e2e";
 
 // Collections used by the app
 const COLLECTIONS_TO_CLEAR = ["users", "shopItems"];
@@ -26,7 +26,7 @@ const looksForbidden =
 
 if (looksForbidden) {
   console.error(
-    `Refusing to reset database "${E2E_DB_NAME}". Use a dedicated E2E DB name (e.g. shopping_list_test_e2e).`
+    `Refusing to reset database "${E2E_DB_NAME}". Use a dedicated E2E DB name (e.g. shopping-list-test-e2e).`
   );
   process.exit(1);
 }
