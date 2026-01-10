@@ -1,8 +1,8 @@
 # Node modules
-server/node_modules
-server/*.local
+/node_modules/
+server/node_modules/
 
-# API key
+# Backend environment variables
 server/config.env
 
 # E2E test environment variables
