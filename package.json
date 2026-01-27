@@ -26,6 +26,7 @@
     "e2e:test:headed": "npm run e2e:check-docker && npm run e2e:docker:up && playwright test --headed",
     "e2e:test:list": "playwright test --list",
     "test:e2e": "npm run e2e:check-docker && npm run e2e:docker:up && playwright test",
-    "test:e2e:headed": "npm run e2e:check-docker && npm run e2e:docker:up && playwright test --headed"
+    "test:e2e:headed": "npm run e2e:check-docker && npm run e2e:docker:up && playwright test --headed",
+    "test:server": "cd server && node --env-file=../e2e/config.e2e.env server.js"
   }
 }
