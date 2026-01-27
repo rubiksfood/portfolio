@@ -8,7 +8,6 @@ A full-stack MERN application built with a **QA-first mindset**, focusing on tes
 This project demonstrates my ability to design **testable systems**, apply the **test pyramid effectively**, and validate real user behaviour through backend, frontend, and end-to-end (E2E) testing.
 
 > **Primary focus:** QA / Test Automation / SDET roles  
-> **Secondary focus:** Backend or Full-Stack Software Engineering
 
 ## 🧭 QA Focus & Skills Demonstrated
 
@@ -65,9 +64,11 @@ This app allows users to create and manage personalised shopping lists with full
 
 Testing is treated as a **first-class concern** in this project, with clear separation between unit, integration, system, and end-to-end test levels in line with the test pyramid.  
 
-This project includes comprehensive automated testing on the frontend, backend, and E2E, designed using ISTQB-aligned principles and real-world best practices. Testing focuses on functional correctness, error handling, security-related behaviour, and regression protection.  
+This project includes comprehensive automated testing on the frontend, backend, and E2E, designed using ISTQB-aligned principles and real-world best practices. 
+Testing focuses on functional correctness, error handling, security-related behaviour, and regression protection.  
 
-Test cases are designed using equivalence partitioning, state transitions, and negative-path analysis where appropriate. While the focus is on automation, test scenarios are derived from exploratory and risk-based analysis before being automated.  
+Test cases are designed using equivalence partitioning, state transitions, and negative-path analysis where appropriate. 
+While the focus is on automation, test scenarios are derived from exploratory and risk-based analysis before being automated.  
 
 ### Example Defects This Test Suite Is Designed to Catch
 
@@ -312,7 +313,7 @@ npm run test:e2e
 - Crossed-off items automatically move to a separate list, beneath the active list.
 - Use **Login / Register / Logout** from the navbar to manage your session.
 
-## 🎯 Why This Project Matters
+## 🎯 Why I Created This Project
 This project demonstrates:
 - Professional QA thinking applied across the full test pyramid
 - Automated testing of functional, security-related, and regression scenarios
@@ -321,7 +322,7 @@ This project demonstrates:
 - Full-stack development using modern tooling (frontend and backend)
 - Secure authentication and protected API integration
 
-It forms part of my transition into software engineering and QA, showcasing not just functionality but also software design thinking and test-aware development.
+It forms part of my transition into QA and software engineering, showcasing not just functionality but also software design thinking and test-aware development.
 
 ---
 
