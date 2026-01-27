@@ -14,7 +14,7 @@
     "wait-on": "^8.0.0"
   },
   "scripts": {
-    "dev:server": "cd server && node --env-file=../e2e/config.e2e.env server.js",
+    "dev:server": "cd server && node --env-file=config.env server.js",
     "dev:client": "cd client && npm run dev",
     "dev": "concurrently -k -n server,client -c auto \"npm run dev:server\" \"npm run dev:client\"",
     "e2e:check-docker": "node e2e/utils/check-docker.mjs",
